@@ -1,0 +1,746 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#17110E"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="MaskED HQ"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><script src="pwa.js" data-app="masked" data-caps="db,downloads"></script><style>.pwa-home{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:50%;text-decoration:none;font:600 18px/1 system-ui,sans-serif;border:1px solid currentColor;opacity:.75;-webkit-tap-highlight-color:transparent}.pwa-home:active{transform:scale(.92)}</style><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>MaskED HQ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: torn black "blindfold" band header with the paper-cut M, sticky tab strip, single-column workspace on cream paper */
+:root{
+  --paper:#F2E4D0; --card:#FBF4EA; --sunk:#EADAC2; --ink:#1C1512; --muted:#6B5B4E; --line:#D9C5AB;
+  --red:#BF3328; --on-red:#FFF5EA; --gold:#B5862C; --blue:#1B3A6B; --ok:#2F7343; --warn:#A8670F;
+  --band:#17110E; --band-ink:#F2E4D0;
+  --f-display:"Archivo Black","Arial Black",Impact,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#14100E; --card:#1E1815; --sunk:#271F1A; --ink:#F1E3D0; --muted:#A99786; --line:#3A2E27;
+  --red:#DC4A3D; --on-red:#1A0F0C; --gold:#D6AA4F; --blue:#7D9DD6; --ok:#6DB47E; --warn:#E3A548;
+  --band:#060404; --band-ink:#F1E3D0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#14100E; --card:#1E1815; --sunk:#271F1A; --ink:#F1E3D0; --muted:#A99786; --line:#3A2E27;
+  --red:#DC4A3D; --on-red:#1A0F0C; --gold:#D6AA4F; --blue:#7D9DD6; --ok:#6DB47E; --warn:#E3A548;
+  --band:#060404; --band-ink:#F1E3D0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header band */
+.band{background:var(--band);color:var(--band-ink);padding-block:18px 30px;
+  clip-path:polygon(0 0,100% 0,100% 86%,97% 93%,93% 85%,89% 95%,84% 87%,79% 96%,74% 86%,69% 94%,63% 87%,58% 97%,52% 88%,47% 95%,41% 85%,36% 94%,30% 87%,25% 96%,19% 86%,14% 94%,8% 87%,4% 95%,0 88%)}
+.band .wrap{display:flex;align-items:center;gap:14px}
+.logo{width:62px;height:auto;border-radius:6px;transform:rotate(-3deg);box-shadow:3px 4px 0 rgba(0,0,0,.45);flex:none}
+.brand h1{font:400 26px/1 var(--f-display);margin:0;letter-spacing:.5px}
+.brand h1 b{color:var(--red);font-weight:400}
+.brand p{margin:4px 0 0;font:500 12px/1.3 var(--f-mono);letter-spacing:.06em;opacity:.75;text-transform:uppercase}
+.goldrule{height:4px;background:var(--gold);margin:4px auto 0;max-width:1080px;border-radius:1px;opacity:.9}
+
+/* tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-block:8px}
+.tabs .wrap::-webkit-scrollbar{display:none}
+.tab{flex:none;border:0;background:none;padding:8px 12px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-current="page"]{background:var(--ink);color:var(--paper)}
+
+main{padding-block:20px 80px}
+h2{font:400 24px/1.15 var(--f-display);margin:0;text-wrap:balance}
+h3{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sub{color:var(--muted);margin:4px 0 0;font-size:14px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.stack{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+.btn{border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--red);border-color:var(--red);color:var(--on-red)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink)}
+.btn.danger{color:var(--red);border-color:var(--red);background:none}
+.btn.sm{padding:5px 10px;font-size:13px}
+input[type=text],input[type=number],input[type=date],input[type=search],select,textarea{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 11px;min-width:0}
+textarea{resize:vertical;min-height:84px;line-height:1.55}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red)}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+label.f>*{text-transform:none;letter-spacing:0;font-weight:400;font-size:15px;color:var(--ink)}
+
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.st{border:0;color:var(--on-red)}
+.st-Idea{background:var(--sunk);color:var(--muted)}
+.st-Scripting{background:var(--blue);color:var(--paper)}
+.st-Shooting{background:var(--gold);color:var(--band)}
+.st-Editing{background:var(--red)}
+.st-Scheduled{background:var(--ink);color:var(--paper)}
+.st-Published{background:var(--ok);color:var(--paper)}
+.wc-ok{color:var(--ok);border-color:var(--ok)}
+.wc-off{color:var(--warn);border-color:var(--warn)}
+
+/* idea cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;text-align:left;min-width:0}
+.card:hover{border-color:var(--ink)}
+.card h4{margin:0;font-size:16px;line-height:1.3;font-weight:700;text-wrap:balance}
+.card .meta{font-size:12px;color:var(--muted)}
+.card .last{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* dashboard */
+.today{background:var(--band);color:var(--band-ink);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.today .k{font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.today .series{font:400 30px/1.05 var(--f-display);color:var(--band-ink)}
+.today .series span{color:var(--red)}
+.today .assigned{font-size:15px;opacity:.9}
+.today .btn{background:transparent;color:var(--band-ink);border-color:rgba(242,228,208,.35)}
+.today .btn.primary{background:var(--red);border-color:var(--red);color:#FFF5EA}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.stat b{display:block;font:600 26px/1.1 var(--f-mono);font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.pipestrip{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--sunk)}
+.pipestrip i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:var(--c)}
+.list{display:flex;flex-direction:column}
+.li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left;width:100%}
+.li:first-child{border-top:0}
+.li .t{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{color:var(--muted);font-size:14px;padding:18px;border:1px dashed var(--line);border-radius:var(--r);text-align:center}
+
+/* pipeline */
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(240px,1fr);gap:12px;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x mandatory}
+.col{background:var(--sunk);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start;min-height:120px}
+.col>header{display:flex;justify-content:space-between;align-items:center;padding:2px 4px 4px}
+.col .card{gap:6px;padding:12px}
+.mv{display:flex;gap:6px}
+.mv button{flex:1}
+
+/* schedule */
+.week{display:flex;flex-direction:column;gap:8px}
+.day{display:grid;grid-template-columns:92px 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.day.is-today{border-color:var(--red);box-shadow:inset 4px 0 0 var(--red)}
+.day .dn{font:400 15px var(--f-display)}
+.day .dd{font:12px var(--f-mono);color:var(--muted)}
+.day .sr{font-weight:700;font-size:14px;margin-bottom:6px}
+.day .fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
+.tick{width:30px;height:30px;border-radius:8px;border:2px solid var(--line);background:var(--paper);cursor:pointer;display:grid;place-items:center;font-weight:700}
+.tick[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+@media (max-width:640px){.day{grid-template-columns:1fr auto}.day .when{grid-column:1/-1;display:flex;gap:10px;align-items:baseline}.day .fields{grid-template-columns:1fr}}
+
+/* diary */
+.entry{padding:14px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.entry:first-child{border-top:0}
+.entry .when{font:12px var(--f-mono);color:var(--muted)}
+.entry .txt{white-space:pre-wrap;overflow-wrap:anywhere}
+.daygrp{font:400 15px var(--f-display);margin:18px 0 2px;color:var(--red)}
+
+/* growth */
+.chart svg{width:100%;height:auto;display:block}
+.chart .grid line{stroke:var(--line)}
+.chart text{fill:var(--muted);font:11px var(--f-mono)}
+.chart .area{fill:var(--red);opacity:.12}
+.chart .lnn{fill:none;stroke:var(--red);stroke-width:2.5}
+.chart .dot{fill:var(--red);stroke:var(--card);stroke-width:2}
+.mile{display:flex;flex-direction:column;gap:6px}
+.bar{height:8px;background:var(--sunk);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold)}
+.bar i.full{background:var(--ok)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:right;padding:8px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+
+/* brand */
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.sw div{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.sw i{display:block;height:54px}
+.sw p{margin:0;padding:8px 10px;font-size:12px}
+.sw p b{display:block;font-size:13px}
+.bigLogo{width:100%;max-width:300px;border-radius:8px;display:block}
+.plain{background:transparent;border-color:transparent;padding:6px 0;min-height:60px}
+.plain:hover{border-color:var(--line)}
+.plain:focus{background:var(--paper);padding:9px 11px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,6,4,.55);z-index:20;display:flex;justify-content:center;align-items:flex-end}
+@media (min-width:720px){.scrim{align-items:center;padding:24px}}
+.sheet{background:var(--card);width:100%;max-width:720px;max-height:92vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:18px max(18px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+@media (min-width:720px){.sheet{border-radius:16px}}
+.sheet .ttl{font:400 22px/1.2 var(--f-display);border:0;background:none;padding:0}
+.sheet .ttl:focus{background:none;padding:0}
+.f3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:520px){.f3{grid-template-columns:1fr 1fr}.f3>:last-child{grid-column:1/-1}}
+.log{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--gold);margin-left:4px}
+.log div{padding:6px 0 10px 14px;position:relative}
+.log div::before{content:"";position:absolute;left:-6px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.log time{font:11px var(--f-mono);color:var(--muted);display:block}
+.log p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.seg{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.seg button{border:0;background:none;padding:8px 12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.seg button[aria-selected="true"]{color:var(--ink);border-color:var(--red)}
+.script{min-height:280px;font-size:15px}
+
+/* checklist */
+.pbar{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--ok)}
+.cklist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.ckrow{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:0;border-top:1px solid var(--line);cursor:pointer;text-align:left;font-weight:600}
+.ckrow:first-child{border-top:0}
+.ckrow[aria-pressed="true"]>span:nth-child(2){color:var(--muted);text-decoration:line-through;text-decoration-color:var(--ok)}
+.ckrow[aria-pressed="true"] .tick{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.ckrow .tick{flex:none}
+
+/* timeline */
+.upcoming{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:8px;overflow-x:auto;padding-bottom:6px}
+.up{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:3px;min-width:0;text-align:left;cursor:pointer}
+.up.empty-slot{border-style:dashed;background:none}
+.up .dd{font:11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.up .sr{font-size:12px;color:var(--red);font-weight:700}
+.up .t{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tl{border-left:2px solid var(--line);margin-left:6px}
+.ev{position:relative;padding:8px 0 12px 18px;display:flex;flex-direction:column;gap:2px}
+.ev::before{content:"";position:absolute;left:-7px;top:13px;width:12px;height:12px;border-radius:50%;background:var(--c,var(--muted));border:2px solid var(--paper)}
+.ev .k{font:11px var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.ev .x{overflow-wrap:anywhere;white-space:pre-wrap}
+.ev button{all:unset;cursor:pointer;font-weight:700;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.ev button:focus-visible{outline:2px solid var(--red)}
+
+/* idea timeline + scrap */
+.st-Scrapped{background:none;color:var(--red);border:1px dashed var(--red)}
+.card.scrapped{opacity:.72;border-style:dashed}
+.card.scrapped h4{text-decoration:line-through;text-decoration-color:var(--red)}
+.track{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;position:relative}
+.track::before{content:"";position:absolute;left:8%;right:8%;top:9px;height:2px;background:var(--line)}
+.stp{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;position:relative;min-width:0}
+.stp i{width:20px;height:20px;border-radius:50%;background:var(--card);border:2px solid var(--line);z-index:1}
+.stp.on i{background:var(--c);border-color:var(--c)}
+.stp.cur i{box-shadow:0 0 0 4px var(--card),0 0 0 6px var(--c)}
+.stp b{font-size:11px;font-weight:700;color:var(--muted);overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.stp.on b{color:var(--ink)}
+.stp span{font-size:10px;color:var(--muted)}
+.track.dead{opacity:.45;filter:grayscale(.6)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.facts div{background:var(--card);padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.facts span{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.facts b{font-size:15px}
+.facts b.good{color:var(--ok)}.facts b.bad{color:var(--red)}
+.scrapband{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px dashed var(--red);border-radius:var(--r);color:var(--red)}
+.scrapband p{margin:2px 0 0;color:var(--ink);font-size:14px}
+.scrapbox{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid var(--red);border-radius:var(--r);background:var(--paper)}
+/* review */
+.rstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.slips{display:flex;flex-wrap:wrap;gap:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;z-index:30;max-width:calc(100% - 32px)}
+.notice{background:var(--sunk);border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:14px}
+/* motion: press, ripple, pop on state change, sheet slide, view fade */
+.btn,.tab,.tick,.ckrow,.card,.li,.up,.chip[data-pcat],.chip[data-tlk],.chip[data-reason]{position:relative;overflow:hidden;transition:transform .12s ease,background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease;-webkit-tap-highlight-color:transparent}
+.btn:active,.tab:active,.tick:active,.chip[data-pcat]:active,.chip[data-tlk]:active,.chip[data-reason]:active{transform:scale(.94)}
+.card:active,.ckrow:active,.li:active,.up:active{transform:scale(.985)}
+.btn.primary:hover{box-shadow:0 3px 0 rgba(0,0,0,.18);transform:translateY(-1px)}
+.btn.primary:active{transform:translateY(1px) scale(.97);box-shadow:none}
+.rip{position:absolute;border-radius:50%;pointer-events:none;background:currentColor;opacity:.22;transform:scale(0);animation:rip .55s ease-out forwards}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+.pop{animation:pop .38s cubic-bezier(.3,1.7,.5,1)}
+@keyframes pop{0%{transform:scale(.6)}55%{transform:scale(1.18)}100%{transform:scale(1)}}
+.land{animation:land .6s ease-out}
+@keyframes land{0%{transform:translateY(-8px);opacity:.3;box-shadow:0 0 0 2px var(--red)}60%{opacity:1}100%{transform:none;box-shadow:0 0 0 0 transparent}}
+.vin{animation:vin .28s ease-out}
+@keyframes vin{from{opacity:0;transform:translateY(8px)}}
+.scrim.enter{animation:fade .2s ease-out}
+.scrim.enter .sheet{animation:sheetUp .32s cubic-bezier(.2,.9,.3,1.05)}
+.scrim.leave{animation:fade .18s ease-in reverse forwards}
+.scrim.leave .sheet{animation:sheetUp .18s ease-in reverse forwards}
+@keyframes fade{from{opacity:0}}
+@keyframes sheetUp{from{transform:translateY(48px);opacity:0}}
+.toast.in{animation:toastIn .3s cubic-bezier(.2,1.4,.4,1)}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,14px) scale(.94)}}
+.seg button{transition:color .2s,border-color .25s}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="band"><div class="wrap">
+  <a class="pwa-home" style="color:var(--band-ink)" href="./" aria-label="Back to Launchpad">&#8249;</a>
+  <img class="logo" alt="MaskED logo" src="data:image/webp;base64,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">
+  <div class="brand"><h1>Mask<b>ED</b> HQ</h1><p>Channel diary · @masked.redacted</p></div>
+</div></div>
+<div class="wrap"><div class="goldrule"></div></div>
+<nav class="tabs" aria-label="Sections"><div class="wrap" id="tabs"></div></nav>
+<main class="wrap"><div id="note"></div><div id="view"></div></main>
+<div id="sheet"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const SERIES=['Masked Mondays','Tuesday Trap','Wednesdays at the Counter','Thursdays Teardown','Friday Confessionals','Saturday People','Sunday Roundup'];
+const SERIES_ALL=[...SERIES,'Bare Numbers','Unassigned'];
+const FORMATS=['Long-form','Short','Reel','Insta post','Story','Newsletter'];
+const STAGES=['Idea','Scripting','Shooting','Editing','Scheduled','Published'];
+const STAGE_C={Idea:'var(--muted)',Scripting:'var(--blue)',Shooting:'var(--gold)',Editing:'var(--red)',Scheduled:'var(--ink)',Published:'var(--ok)'};
+const PCATS=['Image','SEO','Script','Carousel','Subtitles','Newsletter','Other'];
+const VIEWS=[['home','Dashboard'],['ideas','Idea Vault'],['pipeline','Pipeline'],['schedule','Weekly'],['timeline','Timeline'],['review','Review'],['diary','Diary'],['scripts','Scripts'],['growth','Growth'],['brand','Brand Kit'],['prompts','Prompts']];
+const CHECK=[['script','Script final'],['thumb','Thumbnail'],['title','Title & SEO'],['srt','Hinglish SRT'],['caption','Insta caption'],['comment','Pinned comment']];
+const ck=i=>CHECK.filter(([k])=>i.checklist&&i.checklist[k]).length;
+const ckChip=i=>{const n=ck(i);return `<span class="chip mono ${n===CHECK.length?'wc-ok':''}">✓ ${n}/${CHECK.length}</span>`};
+function warnShip(i){const n=ck(i);if(n<CHECK.length)toast(`Published with ${n}/${CHECK.length} checklist items done`)}
+
+const S={ideas:[],diary:[],prompts:[],growth:[],sched:{},reviews:{},brand:{},brandExists:false};
+const loaded={};let db=null;let weekOff=0;let reviewOff=0;let tlKind='All';let tlLimit=120;let ideaFilter={q:'',stage:'All',series:'All'};let diaryQ='';let promptCat='All';
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now=()=>new Date().toISOString();
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+function monday(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x}
+const wkey=d=>'w-'+ymd(monday(d));
+const dIdx=d=>(d.getDay()+6)%7;
+const daysSince=iso=>iso?(Date.now()-new Date(iso))/864e5:999;
+function ago(iso){if(!iso)return'';const s=(Date.now()-new Date(iso))/1000;if(s<60)return'just now';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';const d=Math.floor(s/86400);if(d<30)return d+'d ago';return new Date(iso).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}
+const fmtDT=iso=>new Date(iso).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const words=t=>(t||'').trim().split(/\s+/).filter(Boolean).length;
+const num=n=>Number(n||0).toLocaleString('en-IN');
+function wcChip(i){const w=words(i.script);if(!w)return'';const tgt=i.format==='Short';const ok=w>=190&&w<=220;return `<span class="chip mono ${tgt?(ok?'wc-ok':'wc-off'):''}">${w} words${tgt?' · 190–220':''}</span>`}
+const opts=(arr,sel)=>arr.map(v=>`<option${v===sel?' selected':''}>${esc(v)}</option>`).join('');
+
+const reduced=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let popSel=null;const popAfter=s=>{popSel=s};
+function applyPop(){if(!popSel)return;const s=popSel;popSel=null;const el=document.querySelector(s);if(!el||reduced())return;
+  const c=el.matches('.card,.entry,tr,.log div,.scrapband,.track,.ev')?'land':'pop';el.classList.remove(c);void el.offsetWidth;el.classList.add(c);el.addEventListener('animationend',()=>el.classList.remove(c),{once:true})}
+document.addEventListener('pointerdown',e=>{if(reduced())return;const el=e.target.closest('.btn,.tab,.tick,.ckrow,.card,.li,.up,.chip[data-pcat],.chip[data-tlk],.chip[data-reason]');if(!el)return;
+  const r=el.getBoundingClientRect(),s=Math.max(r.width,r.height)*2.2,sp=document.createElement('span');sp.className='rip';
+  sp.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;el.appendChild(sp);sp.addEventListener('animationend',()=>sp.remove())},{passive:true});
+let sheetEnter=false;const enterCls=()=>{const c=sheetEnter&&!reduced()?' enter':'';sheetEnter=false;return c};
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.hidden=false;t.classList.remove('in');void t.offsetWidth;t.classList.add('in');clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2400)}
+function errMsg(e){if(e&&e.code==='quota_exceeded')return'Storage is full. Delete a few old entries, then try again.';if(e&&e.code==='invalid_argument')return'That change could not be saved. You may have view-only access.';return'Could not save just now. Check your connection and try again.'}
+
+/* ---- writes: one at a time per document ---- */
+const chains={},pend={},timers={};
+function enqueue(path,op){chains[path]=(chains[path]||Promise.resolve()).then(op).catch(e=>toast(errMsg(e)));return chains[path]}
+function patch(path,data,delay=600){pend[path]={...(pend[path]||{}),...data};clearTimeout(timers[path]);timers[path]=setTimeout(()=>flush(path),delay)}
+function flush(path){clearTimeout(timers[path]);const d=pend[path];if(!d)return;delete pend[path];if(!db)return;
+  if(path==='brand/kit'&&!S.brandExists){S.brandExists=true;const full={...S.brand,...d};return enqueue(path,()=>db.doc(path).set(full))}
+  return enqueue(path,()=>db.doc(path).update(d))}
+function flushAll(){Object.keys(pend).forEach(flush)}
+async function addDoc(col,data){if(!db){toast('Saving is unavailable in this view.');return null}
+  try{const r=await db.collection(col).add(data);return r.id}catch(e){toast(errMsg(e));return null}}
+function delDoc(path){if(db)enqueue(path,()=>db.doc(path).delete())}
+function setIdea(id,data,delay,events=[]){const i=S.ideas.find(x=>x.id===id);if(!i)return;const t=now();data.updated=t;const h=[...(i.history||[])];const n0=h.length;
+  if(data.stage&&data.stage!==i.stage){h.push({t,type:'stage',stage:data.stage,from:i.stage});if(data.stage==='Published')warnShip(i)}
+  if('script' in data&&words(data.script)>0&&!h.some(e=>e.type==='script'))h.push({t,type:'script'});
+  if(data.checklist){CHECK.forEach(([k,l])=>{const was=!!(i.checklist&&i.checklist[k]),now_=!!data.checklist[k];if(was!==now_)h.push({t,type:'check',key:k,on:now_})});
+    const full=CHECK.every(([k])=>data.checklist[k]);if(full&&ck(i)<CHECK.length)h.push({t,type:'ready'})}
+  events.forEach(e=>h.push({t,...e}));
+  if(h.length!==n0)data.history=h;Object.assign(i,data);patch('ideas/'+id,data,delay)}
+const live=i=>!i.scrapped;
+const HIST_TXT={script:'First draft of the script started',ready:'Checklist complete. Ready to ship',scrap:'Scrapped',restore:'Restored from scrap',created:'Idea created'};
+function histLine(e){const ty=e.type||(e.stage?'stage':'');const lbl=k=>(CHECK.find(c=>c[0]===k)||[,k])[1];
+  if(ty==='stage')return{c:STAGE_C[e.stage]||'var(--muted)',h:`Moved to <span class="chip st st-${esc(e.stage)}">${esc(e.stage)}</span>${e.from?` <span class="sub" style="font-size:12px">from ${esc(e.from)}</span>`:''}`};
+  if(ty==='check')return{c:'var(--ok)',h:`${e.on?'Ticked':'Unticked'} <b>${esc(lbl(e.key))}</b>`};
+  if(ty==='slot')return{c:'var(--ink)',h:`Booked for <b>${esc(e.day)}</b> · ${esc(e.series)}`};
+  if(ty==='scrap')return{c:'var(--red)',h:'<b style="color:var(--red)">Scrapped</b>',x:e.reason};
+  if(ty==='restore')return{c:'var(--blue)',h:'Restored from scrap'};
+  if(ty==='script')return{c:'var(--blue)',h:'Script started'};
+  if(ty==='ready')return{c:'var(--ok)',h:'<b>Checklist complete.</b> Ready to ship'};
+  return{c:'var(--muted)',h:esc(ty)}}
+
+/* ---- render with draft preservation ---- */
+let raf=0;function rerender(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;render()})}
+function route(){const h=location.hash.slice(1);return VIEWS.some(v=>v[0]===h)?h:'home'}
+function render(){
+  const v=route();
+  document.getElementById('tabs').innerHTML=VIEWS.map(([k,l])=>`<button class="tab" data-go="${k}"${k===v?' aria-current="page"':''}>${l}</button>`).join('');
+  const root=document.getElementById('view');
+  const a=document.activeElement;const keep={};root.querySelectorAll('[id]').forEach(el=>{if('value' in el&&el.type!=='button')keep[el.id]=el.value});
+  const fid=a&&root.contains(a)?a.id:null;const sel=fid&&a.selectionStart!=null?[a.selectionStart,a.selectionEnd]:null;
+  root.innerHTML=(V[v]||V.home)();
+  for(const k in keep){const el=document.getElementById(k);if(el&&el.dataset.keep!=null&&el.value!==keep[k])el.value=keep[k]}
+  if(fid){const el=document.getElementById(fid);if(el){el.focus();if(sel)try{el.setSelectionRange(...sel)}catch(e){}}}
+  applyPop();
+}
+
+/* ---- helpers ---- */
+function ideaCard(i,extra=''){const last=(i.log||[]).slice(-1)[0];
+  return `<button class="card${i.scrapped?' scrapped':''}" data-open="${i.id}"><div class="spread">${i.scrapped?`<span class="chip st st-Scrapped">Scrapped · was ${esc(i.stage)}</span>`:`<span class="chip st st-${esc(i.stage)}">${esc(i.stage)}</span>`}<span class="meta mono">${ago(i.updated)}</span></div>
+  <h4>${esc(i.title||'Untitled idea')}</h4>
+  <div class="row"><span class="chip">${esc(i.series||'Unassigned')}</span><span class="chip">${esc(i.format||'')}</span>${ckChip(i)}${(i.log||[]).length?`<span class="chip mono">${i.log.length} notes</span>`:''}</div>
+  ${last?`<div class="last">${esc(last.text)}</div>`:''}${extra}</button>`}
+function doneOn(d){return !!S.sched[wkey(d)]?.days?.[dIdx(d)]?.done}
+function streak(){const d=new Date();if(!doneOn(d))d.setDate(d.getDate()-1);let n=0;while(n<500&&doneOn(d)){n++;d.setDate(d.getDate()-1)}return n}
+const byUpd=(a,b)=>(b.updated||'').localeCompare(a.updated||'');
+function waiting(key,label){return loaded[key]?'':`<div class="empty">Loading ${label}…</div>`}
+
+/* ---- views ---- */
+const V={};
+V.home=()=>{
+  const t=new Date(),k=wkey(t),i=dIdx(t),slot=S.sched[k]?.days?.[i]||{};
+  const idea=S.ideas.find(x=>x.id===slot.ideaId);
+  const wk=S.sched[k]?.days||{};const doneWk=Object.values(wk).filter(x=>x&&x.done).length;
+  const L=S.ideas.filter(live);const cnt=STAGES.map(s=>[s,L.filter(x=>x.stage===s).length]);const tot=L.length||1;
+  const stale=L.filter(x=>x.stage!=='Published'&&daysSince(x.updated)>=14).sort((a,b)=>(a.updated||'').localeCompare(b.updated||'')).slice(0,5);
+  const recent=[...L].sort(byUpd).slice(0,4);
+  const lastD=[...S.diary].sort((a,b)=>(b.created||'').localeCompare(a.created||''))[0];
+  const ser=SERIES[i].split(' ');
+  return `<div class="grid g2">
+  <section class="today">
+    <div class="k">Today · ${DAYS[i]} ${t.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+    <div class="series">${esc(ser.slice(0,-1).join(' '))} <span>${esc(ser.slice(-1)[0])}</span></div>
+    <div class="assigned">${idea?`Slot: <b>${esc(idea.title)}</b> · ${esc(idea.stage)}`:'No idea assigned to today’s slot yet.'}</div>
+    <div class="row">${idea?`<button class="btn sm" data-open="${idea.id}">Open idea</button>`:`<button class="btn sm" data-go="schedule">Assign in Weekly</button>`}
+      <button class="btn sm ${slot.done?'':'primary'}" data-today-done>${slot.done?'Marked done ✓':'Mark today done'}</button></div>
+  </section>
+  <section class="stack">
+    <div class="stats">
+      <div class="stat"><b>${streak()}</b><span>day streak</span></div>
+      <div class="stat"><b>${doneWk}/7</b><span>this week</span></div>
+      <div class="stat"><b>${L.filter(x=>x.stage!=='Published').length}</b><span>open ideas</span></div>
+    </div>
+    <div class="panel stack"><label class="f">Quick capture<input type="text" id="qc" data-keep placeholder="New idea title, then Enter"></label>
+      <div class="row"><button class="btn primary sm" data-act="capture">Save to vault</button><span class="sub" style="margin:0">Files under today’s series.</span></div></div>
+  </section></div>
+  <section class="panel stack" style="margin-top:14px"><div class="spread"><h3>Pipeline</h3><button class="btn ghost sm" data-go="pipeline">Open board →</button></div>
+    <div class="pipestrip">${cnt.map(([s,n])=>n?`<i style="width:${n/tot*100}%;background:${STAGE_C[s]}" title="${s}: ${n}"></i>`:'').join('')}</div>
+    <div class="legend">${cnt.map(([s,n])=>`<span style="--c:${STAGE_C[s]}">${s} <b class="mono">${n}</b></span>`).join('')}</div></section>
+  <div class="grid g2" style="margin-top:14px">
+    <section class="panel"><div class="spread" style="margin-bottom:6px"><h3>Gone cold · 14+ days</h3></div>
+      ${stale.length?`<div class="list">${stale.map(x=>`<button class="li" data-open="${x.id}"><span class="t">${esc(x.title)}</span><span class="chip mono">${Math.floor(daysSince(x.updated))}d</span></button>`).join('')}</div>`:`<div class="empty">Nothing has gone cold. Every open idea was touched in the last two weeks.</div>`}</section>
+    <section class="panel"><div class="spread" style="margin-bottom:6px"><h3>Recently touched</h3><button class="btn ghost sm" data-go="ideas">Vault →</button></div>
+      ${recent.length?`<div class="list">${recent.map(x=>`<button class="li" data-open="${x.id}"><span class="t">${esc(x.title)}</span><span class="chip st st-${x.stage}">${x.stage}</span></button>`).join('')}</div>`:waiting('ideas','ideas')||`<div class="empty">No ideas yet. Capture one above.</div>`}</section>
+  </div>
+  <section class="panel" style="margin-top:14px"><div class="spread" style="margin-bottom:6px"><h3>Last diary entry</h3><button class="btn ghost sm" data-go="diary">Diary →</button></div>
+    ${lastD?`<div class="entry"><span class="when">${fmtDT(lastD.created)}</span><div class="txt">${esc(lastD.text)}</div></div>`:`<div class="empty">Write the first entry in the Diary tab.</div>`}</section>
+  <div class="grid g2" style="margin-top:14px">
+   <section class="panel stack"><div class="spread"><h3>Weekly review</h3>${S.reviews[k]?.updated?`<span class="chip wc-ok">Done</span>`:`<span class="chip">${i>=5?'Due':'Opens Sat–Sun'}</span>`}</div>
+    <p class="sub" style="margin:0">${S.reviews[k]?.next?`Focus this week: <b style="color:var(--ink)">${esc(S.reviews[k].next)}</b>`:'Ten minutes at the end of the week: what shipped, what slipped, one focus for next week.'}</p>
+    <div><button class="btn sm" data-go="review">Open review</button></div></section>
+   <section class="panel stack"><div class="spread"><h3>Backup</h3>${!lastExport||daysSince(lastExport)>7?`<span class="chip wc-off">${lastExport?Math.floor(daysSince(lastExport))+'d since last':'Never backed up'}</span>`:`<span class="chip wc-ok">${ago(lastExport)}</span>`}</div>
+    <p class="sub" style="margin:0">Download every idea, script, diary entry, review and log as one .json file. Weekly is a good habit.</p>
+    <div><button class="btn sm" data-act="export">Export backup</button></div></section></div>`;
+};
+
+V.ideas=()=>{
+  const q=ideaFilter.q.toLowerCase();
+  const list=S.ideas.filter(i=>(ideaFilter.stage==='Scrapped'?!!i.scrapped:live(i)&&(ideaFilter.stage==='All'||i.stage===ideaFilter.stage))&&(ideaFilter.series==='All'||i.series===ideaFilter.series)&&(!q||[i.title,i.pitch,i.tags,...(i.log||[]).map(l=>l.text)].join(' ').toLowerCase().includes(q))).sort(byUpd);
+  return `<div class="head"><div><h2>Idea Vault</h2><p class="sub">Every idea keeps a dated build log. Open one to add to it.</p></div><button class="btn primary" data-act="newidea">New idea</button></div>
+  <div class="grid" style="grid-template-columns:2fr 1fr 1fr;margin-bottom:14px" id="ifl">
+    <input type="search" id="q-ideas" data-keep placeholder="Search titles, notes, tags" value="${esc(ideaFilter.q)}" aria-label="Search ideas">
+    <select id="f-stage" aria-label="Stage">${opts(['All',...STAGES,'Scrapped'],ideaFilter.stage)}</select>
+    <select id="f-series" aria-label="Series">${opts(['All',...SERIES_ALL],ideaFilter.series)}</select></div>
+  ${list.length?`<div class="grid g3">${list.map(i=>ideaCard(i)).join('')}</div>`:(waiting('ideas','ideas')||`<div class="empty">${S.ideas.length?'No ideas match these filters.':'The vault is empty. Add your first idea.'}</div>`)}
+  <style>@media(max-width:560px){#ifl{grid-template-columns:1fr 1fr!important}#ifl input{grid-column:1/-1}}</style>`;
+};
+
+V.pipeline=()=>`<div class="head"><div><h2>Pipeline</h2><p class="sub">Move a project one stage at a time. Swipe sideways on a phone.</p></div><button class="btn primary" data-act="newidea">New idea</button></div>
+  <div class="board">${STAGES.map((s,si)=>{const items=S.ideas.filter(i=>live(i)&&i.stage===s).sort(byUpd);return `<section class="col"><header><span class="chip st st-${s}">${s}</span><span class="mono" style="color:var(--muted);font-size:13px">${items.length}</span></header>
+  ${items.map(i=>`<div class="card" data-open="${i.id}" role="button" tabindex="0"><h4>${esc(i.title)}</h4><div class="spread"><div class="meta">${esc(i.series)} · ${esc(i.format)} · ${ago(i.updated)}</div>${ckChip(i)}</div>
+    <div class="mv">${si>0?`<button class="btn sm" data-move="${i.id}" data-dir="-1" aria-label="Move back">← ${STAGES[si-1]}</button>`:''}${si<STAGES.length-1?`<button class="btn sm" data-move="${i.id}" data-dir="1" aria-label="Move forward">${STAGES[si+1]} →</button>`:''}</div></div>`).join('')||`<div class="empty" style="padding:10px;font-size:13px">Nothing here</div>`}</section>`}).join('')}</div>`;
+
+V.schedule=()=>{
+  const base=new Date();base.setDate(base.getDate()+weekOff*7);const mon=monday(base),k=wkey(base),days=S.sched[k]?.days||{};
+  const end=new Date(mon);end.setDate(mon.getDate()+6);const today=ymd(new Date());
+  const pool=S.ideas.filter(i=>(live(i)&&i.stage!=='Published')||Object.values(days).some(d=>d&&d.ideaId===i.id)).sort(byUpd);
+  const done=Object.values(days).filter(d=>d&&d.done).length;
+  return `<div class="head"><div><h2>Seven days, seven masks.</h2><p class="sub mono">${mon.toLocaleDateString('en-IN',{day:'numeric',month:'short'})} – ${end.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})} · ${done}/7 done</p></div>
+  <div class="row"><button class="btn sm" data-wk="-1" aria-label="Previous week">←</button><button class="btn sm" data-wk="0">This week</button><button class="btn sm" data-wk="1" aria-label="Next week">→</button></div></div>
+  <div class="week">${SERIES.map((s,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);const sl=days[i]||{};
+   return `<div class="day${ymd(d)===today?' is-today':''}"><div class="when"><div class="dn">${DAYS[i]}</div><div class="dd">${d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div></div>
+   <div style="min-width:0"><div class="sr">${esc(s)}</div><div class="fields">
+     <select id="si-${k}-${i}" data-slot="${i}" data-wkey="${k}" aria-label="Idea for ${DAYS[i]}"><option value="">— no idea assigned —</option>${pool.map(p=>`<option value="${p.id}"${p.id===sl.ideaId?' selected':''}>${esc(p.title)}</option>`).join('')}</select>
+     <input type="text" id="sn-${k}-${i}" data-keep data-slotnote="${i}" data-wkey="${k}" placeholder="Note (format, time, hook)" value="${esc(sl.note||'')}"></div></div>
+   <button class="tick" data-done="${i}" data-wkey="${k}" aria-pressed="${!!sl.done}" aria-label="Mark ${DAYS[i]} done">${sl.done?'✓':''}</button></div>`}).join('')}</div>
+  <p class="sub" style="margin-top:12px">Ticking a day also moves its assigned idea to Published. Bare Numbers runs off-calendar, so file it in the vault under that series.</p>`;
+};
+
+V.diary=()=>{
+  const q=diaryQ.toLowerCase();const list=[...S.diary].sort((a,b)=>(b.created||'').localeCompare(a.created||'')).filter(e=>!q||(e.text||'').toLowerCase().includes(q));
+  let lastDay='';const ideas=[...S.ideas].sort(byUpd);
+  return `<div class="head"><div><h2>Diary</h2><p class="sub">Wins, doubts, things you noticed about the channel. One line is enough.</p></div></div>
+  <div class="panel stack"><textarea id="d-text" data-keep placeholder="What happened with MaskED today?"></textarea>
+   <div class="row"><select id="d-idea" data-keep style="flex:1;min-width:180px" aria-label="Link to an idea"><option value="">Not linked to an idea</option>${ideas.map(i=>`<option value="${i.id}">${esc(i.title)}</option>`).join('')}</select><button class="btn primary" data-act="diary">Add entry</button></div></div>
+  <div style="margin:18px 0 6px"><input type="search" id="q-diary" data-keep placeholder="Search the diary" value="${esc(diaryQ)}" aria-label="Search diary"></div>
+  ${list.length?list.map(e=>{const day=new Date(e.created).toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const h=day!==lastDay?`<div class="daygrp">${day}</div>`:'';lastDay=day;const li=S.ideas.find(x=>x.id===e.ideaId);
+   return `${h}<div class="entry"><div class="spread"><span class="when">${new Date(e.created).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'})}${li?` · <button class="btn ghost sm" style="padding:0" data-open="${li.id}">${esc(li.title)}</button>`:''}</span><button class="btn ghost sm" data-deldiary="${e.id}">${pendingDel===e.id?'Tap again to delete':'Delete'}</button></div><div class="txt">${esc(e.text)}</div></div>`}).join(''):(waiting('diary','diary')||`<div class="empty">${S.diary.length?'No entries match.':'No entries yet.'}</div>`)}`;
+};
+let pendingDel=null;
+
+V.scripts=()=>{const list=S.ideas.filter(i=>live(i)&&words(i.script)>0).sort(byUpd);
+  return `<div class="head"><div><h2>Script Bank</h2><p class="sub">Scripts live inside their idea. Shorts are checked against 190–220 words.</p></div></div>
+  ${list.length?`<div class="grid g3">${list.map(i=>`<div class="card" data-open="${i.id}" data-tab="script" role="button" tabindex="0"><div class="spread"><span class="chip">${esc(i.format)}</span>${wcChip(i)}</div><h4>${esc(i.title)}</h4><div class="last">${esc(i.script.slice(0,180))}</div>
+   <div class="row"><button class="btn sm" data-copyscript="${i.id}">Copy script</button><span class="meta mono">${ago(i.updated)}</span></div></div>`).join('')}</div>`:(waiting('ideas','scripts')||`<div class="empty">No scripts yet. Open an idea and use its Script tab.</div>`)}`};
+
+V.growth=()=>{
+  const g=[...S.growth].sort((a,b)=>(a.date||'').localeCompare(b.date||''));const L=g[g.length-1]||{};
+  const miles=[['YouTube subscribers',L.subs,1000,'Monetisation gate, and the gate for a second channel'],['Watch hours (12 mo)',L.hours,4000,'Needed for the YouTube Partner Programme'],['Instagram followers',L.ig,1000,'@masked.redacted'],['YouTube subscribers',L.subs,10000,'Next tier']];
+  return `<div class="head"><div><h2>Growth</h2><p class="sub">Log numbers from YouTube Studio and Instagram whenever you check them.</p></div></div>
+  <div class="panel stack"><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+   <label class="f">Date<input type="date" id="g-date" data-keep value="${ymd(new Date())}"></label>
+   <label class="f">Subscribers<input type="number" id="g-subs" data-keep min="0" inputmode="numeric"></label>
+   <label class="f">Total views<input type="number" id="g-views" data-keep min="0" inputmode="numeric"></label>
+   <label class="f">Watch hours<input type="number" id="g-hours" data-keep min="0" inputmode="numeric"></label>
+   <label class="f">IG followers<input type="number" id="g-ig" data-keep min="0" inputmode="numeric"></label></div>
+   <div><button class="btn primary" data-act="growth">Log numbers</button></div></div>
+  <div class="grid g2" style="margin-top:14px">
+   <section class="panel chart"><h3 style="margin-bottom:10px">Subscribers over time</h3>${chart(g)}</section>
+   <section class="panel stack"><h3>Milestones</h3>${miles.map(([n,v,t,s])=>{const p=Math.min(100,(v||0)/t*100);return `<div class="mile"><div class="spread"><b style="font-size:14px">${n} · ${num(t)}</b><span class="mono" style="font-size:13px">${num(v)} / ${num(t)}</span></div><div class="bar"><i class="${p>=100?'full':''}" style="width:${p}%"></i></div><span class="sub" style="margin:0;font-size:12px">${s}</span></div>`}).join('')}</section></div>
+  ${g.length?`<section class="panel" style="margin-top:14px"><h3 style="margin-bottom:8px">Log</h3><div class="tbl"><table><thead><tr><th>Date</th><th>Subs</th><th>Views</th><th>Watch hrs</th><th>IG</th><th></th></tr></thead><tbody>
+   ${[...g].reverse().map(r=>`<tr><td class="mono">${r.date}</td><td class="mono">${num(r.subs)}</td><td class="mono">${num(r.views)}</td><td class="mono">${num(r.hours)}</td><td class="mono">${num(r.ig)}</td><td><button class="btn ghost sm" data-delgrowth="${r.id}">${pendingDel===r.id?'Confirm':'Delete'}</button></td></tr>`).join('')}</tbody></table></div></section>`:''}`;
+};
+function chart(g){const pts=g.filter(r=>r.subs!=null&&r.subs!=='');if(pts.length<2)return `<div class="empty">Log at least two dates to see the line.</div>`;
+  const W=640,H=230,m={l:48,r:20,t:14,b:28};const xs=pts.map(p=>new Date(p.date).getTime()),x0=Math.min(...xs),x1=Math.max(...xs)||x0+1;
+  const ymax=Math.max(...pts.map(p=>+p.subs));const step=Math.pow(10,Math.floor(Math.log10(ymax||1)));const top=Math.ceil((ymax||1)/step)*step||1;
+  const X=t=>m.l+(t-x0)/((x1-x0)||1)*(W-m.l-m.r),Y=v=>H-m.b-(v/top)*(H-m.t-m.b);
+  const line=pts.map((p,i)=>`${i?'L':'M'}${X(xs[i]).toFixed(1)},${Y(+p.subs).toFixed(1)}`).join('');
+  const area=line+`L${X(xs[xs.length-1]).toFixed(1)},${Y(0)}L${X(xs[0]).toFixed(1)},${Y(0)}Z`;
+  const ticks=[0,.25,.5,.75,1].map(f=>Math.round(top*f));const lp=pts[pts.length-1];const fd=s=>new Date(s).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Subscribers line chart"><g class="grid">${ticks.map(t=>`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(t)}" y2="${Y(t)}"/>`).join('')}</g>
+  ${ticks.map(t=>`<text x="${m.l-8}" y="${Y(t)+4}" text-anchor="end">${num(t)}</text>`).join('')}
+  <text x="${m.l}" y="${H-8}">${fd(pts[0].date)}</text><text x="${W-m.r}" y="${H-8}" text-anchor="end">${fd(lp.date)}</text>
+  <path class="area" d="${area}"/><path class="lnn" d="${line}"/><circle class="dot" r="5" cx="${X(xs[xs.length-1])}" cy="${Y(+lp.subs)}"/></svg>`}
+
+V.brand=()=>{const b=S.brand||{};const ta=(f,l,ph)=>`<section class="panel stack"><h3>${l}</h3><textarea class="plain" id="b-${f}" data-keep data-brand="${f}" placeholder="${ph}">${esc(b[f]||'')}</textarea></section>`;
+  return `<div class="head"><div><h2>Brand Kit</h2><p class="sub">Everything locked for MaskED in one place. Tap any text to edit it.</p></div></div>
+  <div class="grid g2"><section class="panel stack"><h3>Logo</h3><img class="bigLogo" src="${document.querySelector('.logo').src}" alt="MaskED paper-cut M logo"><p class="sub" style="margin:0">Paper-cut M: two blindfolded faces under one torn black band, gold underline.</p></section>
+  <section class="panel stack"><h3>Palette</h3><div class="sw">
+   ${[['Paper cream','#F2E4D0','Logo ground'],['Mask red','#C8362C','Hero accent'],['Torn black','#17110E','Band, blindfold'],['Rule gold','#C9A04A','Underline only'],['Scratch blue','#1B3A6B','Scratch Edition'],['Pitch black','#000000','Video ground']].map(([n,h,u])=>`<div><i style="background:${h}"></i><p><b>${n}</b><span class="mono">${h}</span><br>${u}</p></div>`).join('')}</div></section></div>
+  <div class="grid g2" style="margin-top:14px">${ta('taglines','Taglines','One per line')}${ta('hashtags','Hashtag & caption rules','YouTube vs Instagram rules')}${ta('scriptFormat','Shorts script format','Length, register, structure')}${ta('host','Reel host avatar (locked)','Look, outfit, props')}${ta('reelStyle','Reel animation style (locked)','Fills, glitches, logo placement')}${ta('captions','Caption & sound rules','Caption treatment, SFX levels')}</div>`};
+
+V.prompts=()=>{const list=S.prompts.filter(p=>promptCat==='All'||p.cat===promptCat).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+  return `<div class="head"><div><h2>Prompt Library</h2><p class="sub">Master prompts, ready to copy in one tap.</p></div><button class="btn primary" data-act="newprompt">New prompt</button></div>
+  <div class="row" style="margin-bottom:14px">${['All',...PCATS].map(c=>`<button class="chip" style="cursor:pointer;${c===promptCat?'background:var(--ink);color:var(--paper);border-color:var(--ink)':'background:none'}" data-pcat="${c}">${c}</button>`).join('')}</div>
+  ${list.length?`<div class="grid g3">${list.map(p=>`<div class="card" data-openp="${p.id}" role="button" tabindex="0"><div class="spread"><span class="chip">${esc(p.cat)}</span><span class="meta mono">${words(p.body)} words</span></div><h4>${esc(p.title||'Untitled prompt')}</h4><div class="last">${esc((p.body||'').slice(0,160))}</div><div><button class="btn sm" data-copyp="${p.id}">Copy</button></div></div>`).join('')}</div>`:(waiting('prompts','prompts')||`<div class="empty">No prompts here yet. Paste your Gemini, SEO, carousel, SRT or newsletter master prompts with “New prompt”.</div>`)}`};
+
+V.timeline=()=>{
+  const t0=new Date();const ups=[];for(let n=0;n<14;n++){const d=new Date(t0);d.setDate(t0.getDate()+n);const sl=S.sched[wkey(d)]?.days?.[dIdx(d)]||{};ups.push({d,sl,idea:S.ideas.find(x=>x.id===sl.ideaId)})}
+  const KC={Ideas:'var(--blue)',Notes:'var(--gold)',Stages:'var(--red)',Diary:'var(--ink)',Reviews:'var(--ok)',Growth:'var(--muted)'};
+  const ev=[];const link=i=>`<button data-open="${i.id}">${esc(i.title||'Untitled')}</button>`;
+  S.ideas.forEach(i=>{if(i.created)ev.push({t:i.created,k:'Ideas',h:`New idea · ${link(i)}`});
+    (i.history||[]).forEach(h=>{const ty=h.type||'stage';if(ty==='check')return;const L=histLine(h);ev.push({t:h.t,k:'Stages',h:`${link(i)} · ${L.h}`,x:L.x})});
+    (i.log||[]).forEach(l=>ev.push({t:l.t,k:'Notes',h:`Note on ${link(i)}`,x:l.text}))});
+  S.diary.forEach(e=>ev.push({t:e.created,k:'Diary',h:'Diary',x:e.text}));
+  Object.values(S.reviews).forEach(r=>r.updated&&ev.push({t:r.updated,k:'Reviews',h:`Weekly review · week of ${new Date(r.week).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}`,x:r.next?`Next week: ${r.next}`:''}));
+  S.growth.forEach(g=>ev.push({t:g.date+'T12:00:00',k:'Growth',h:`Logged numbers${g.subs!=null?` · ${num(g.subs)} subs`:''}`}));
+  const list=ev.filter(e=>e.t&&(tlKind==='All'||e.k===tlKind)).sort((a,b)=>b.t.localeCompare(a.t));
+  let last='';const shown=list.slice(0,tlLimit);
+  return `<div class="head"><div><h2>Timeline</h2><p class="sub">How the channel grew, day by day. Newest first.</p></div></div>
+  <section class="panel stack" style="margin-bottom:16px"><h3>Next 14 days</h3><div class="upcoming">${ups.map(u=>`<button class="up${u.idea?'':' empty-slot'}" ${u.idea?`data-open="${u.idea.id}"`:'data-go="schedule"'}><span class="dd">${DAYS[dIdx(u.d)]} ${u.d.getDate()} ${u.d.toLocaleDateString('en-IN',{month:'short'})}${u.sl.done?' · ✓':''}</span><span class="sr">${esc(SERIES[dIdx(u.d)])}</span><span class="t">${u.idea?esc(u.idea.title):'Empty slot'}</span></button>`).join('')}</div></section>
+  <div class="row" style="margin-bottom:12px">${['All','Ideas','Notes','Stages','Diary','Reviews','Growth'].map(c=>`<button class="chip" style="cursor:pointer;${c===tlKind?'background:var(--ink);color:var(--paper);border-color:var(--ink)':'background:none'}" data-tlk="${c}">${c}</button>`).join('')}</div>
+  ${shown.length?`<div class="tl">${shown.map(e=>{const day=new Date(e.t).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});const h=day!==last?`<div class="daygrp" style="margin:14px 0 4px 18px">${day}</div>`:'';last=day;
+    return `${h}<div class="ev" style="--c:${KC[e.k]}"><span class="k">${new Date(e.t).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'})} · ${e.k}</span><div>${e.h}</div>${e.x?`<div class="x">${esc(e.x)}</div>`:''}</div>`}).join('')}</div>
+   ${list.length>tlLimit?`<div style="margin-top:12px"><button class="btn" data-act="tlmore">Show older</button></div>`:''}`:`<div class="empty">Nothing here yet. Stage moves, notes and diary entries will appear as you work.</div>`}`;
+};
+
+function weekRange(off){const b=new Date();b.setDate(b.getDate()+off*7);const mon=monday(b);const end=new Date(mon);end.setDate(mon.getDate()+7);return{k:wkey(b),mon,end}}
+const inR=(iso,r)=>{if(!iso)return false;const t=new Date(iso);return t>=r.mon&&t<r.end};
+function weekStats(r){const days=S.sched[r.k]?.days||{};const today=new Date();
+  const slipped=SERIES.map((s,i)=>{const d=new Date(r.mon);d.setDate(r.mon.getDate()+i);return{s,i,d,past:ymd(d)<ymd(today),done:!!days[i]?.done}}).filter(x=>x.past&&!x.done);
+  const published=S.ideas.filter(i=>(i.history||[]).some(h=>h.stage==='Published'&&inR(h.t,r)));
+  const created=S.ideas.filter(i=>inR(i.created,r));
+  const notes=S.ideas.reduce((n,i)=>n+(i.log||[]).filter(l=>inR(l.t,r)).length,0);
+  const diary=S.diary.filter(e=>inR(e.created,r)).length;
+  return{shipped:Object.values(days).filter(x=>x&&x.done).length,slipped,published,created,notes,diary}}
+V.review=()=>{
+  const r=weekRange(reviewOff),st=weekStats(r),rv=S.reviews[r.k]||{};const last=new Date(r.end);last.setDate(last.getDate()-1);
+  const cand=[...st.published,...S.ideas.filter(i=>i.stage==='Published'&&!st.published.includes(i))];
+  const ta=(f,l,ph)=>`<label class="f">${l}<textarea id="rv-${f}-${r.k}" data-keep data-rv="${f}" data-wkey="${r.k}" placeholder="${ph}">${esc(rv[f]||'')}</textarea></label>`;
+  return `<div class="head"><div><h2>Weekly Review</h2><p class="sub mono">${r.mon.toLocaleDateString('en-IN',{day:'numeric',month:'short'})} – ${last.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}${rv.updated?` · saved ${ago(rv.updated)}`:''}</p></div>
+  <div class="row"><button class="btn sm" data-rwk="-1" aria-label="Previous week">←</button><button class="btn sm" data-rwk="0">This week</button><button class="btn sm" data-rwk="1" aria-label="Next week">→</button></div></div>
+  <div class="rstats">
+   <div class="stat"><b>${st.shipped}/7</b><span>slots shipped</span></div>
+   <div class="stat"><b>${st.published.length}</b><span>moved to Published</span></div>
+   <div class="stat"><b>${st.created.length}</b><span>new ideas</span></div>
+   <div class="stat"><b>${st.notes}</b><span>build-log notes</span></div>
+   <div class="stat"><b>${st.diary}</b><span>diary entries</span></div></div>
+  <div class="grid g2" style="margin-top:14px">
+   <section class="panel stack"><h3>Shipped</h3>${st.published.length?`<div class="list">${st.published.map(i=>`<button class="li" data-open="${i.id}"><span class="t">${esc(i.title)}</span>${ckChip(i)}</button>`).join('')}</div>`:`<div class="empty">Nothing moved to Published this week.</div>`}</section>
+   <section class="panel stack"><h3>Slipped slots</h3>${st.slipped.length?`<div class="slips">${st.slipped.map(x=>`<span class="chip">${DAYS[x.i]} · ${esc(x.s)}</span>`).join('')}</div>`:`<div class="empty">No missed slots so far this week.</div>`}</section></div>
+  <section class="panel stack" style="margin-top:14px"><h3>Your review</h3>
+   <label class="f">Best performer<select id="rv-best-${r.k}" data-rv="best" data-wkey="${r.k}"><option value="">— pick a published video —</option>${cand.map(i=>`<option value="${i.id}"${i.id===rv.best?' selected':''}>${esc(i.title)}</option>`).join('')}</select></label>
+   ${ta('wins','What went well','Hooks that landed, comments, a shoot that went fast')}
+   ${ta('slipped','What slipped, and why','Be honest. Time, energy, a topic that didn’t click')}
+   ${ta('next','One focus for next week','A single thing to do differently')}
+   <div class="row"><button class="btn primary sm" data-act="review2diary" data-wkey="${r.k}">Post summary to Diary</button><span class="sub" style="margin:0">Saves as you type.</span></div></section>`;
+};
+const pendR={};
+function setReview(k,data,delay=700){pendR[k]={...(pendR[k]||{}),...data,updated:now()};S.reviews[k]={...(S.reviews[k]||{week:k.slice(2)}),...pendR[k]};
+  clearTimeout(timers['reviews/'+k]);timers['reviews/'+k]=setTimeout(()=>{const doc={...(S.reviews[k]||{week:k.slice(2)}),...pendR[k]};delete pendR[k];S.reviews[k]=doc;if(db)enqueue('reviews/'+k,()=>db.doc('reviews/'+k).set(doc))},delay)}
+async function reviewToDiary(k){const r=weekRange(reviewOff);const st=weekStats(r),rv=S.reviews[k]||{};const best=S.ideas.find(i=>i.id===rv.best);
+  const text=[`Weekly review (week of ${r.mon.toLocaleDateString('en-IN',{day:'numeric',month:'short'})})`,`Shipped ${st.shipped}/7 slots, ${st.published.length} published, ${st.created.length} new ideas.`,best?`Best: ${best.title}`:'',rv.wins?`Went well: ${rv.wins}`:'',rv.slipped?`Slipped: ${rv.slipped}`:'',rv.next?`Next week: ${rv.next}`:''].filter(Boolean).join('\n');
+  const doc={text,ideaId:'',created:now()};const id=await addDoc('diary',doc);if(id){S.diary.push({id,...doc});toast('Posted to the Diary');rerender()}}
+
+let lastExport=null;try{lastExport=localStorage.getItem('masked-last-export')}catch(e){}
+async function exportAll(){const dl=window.claude?await window.claude.use('downloads'):null;if(!dl){toast('Saving files isn’t supported on this device.');return}
+  const strip=a=>a.map(x=>({...x}));
+  const data={app:'MaskED HQ',exportedAt:now(),ideas:strip(S.ideas),diary:strip(S.diary),prompts:strip(S.prompts),growth:strip(S.growth),schedule:S.sched,reviews:S.reviews,brand:S.brand};
+  try{await dl.save({filename:`masked-hq-backup-${ymd(new Date())}.json`,data:JSON.stringify(data,null,2)});lastExport=now();try{localStorage.setItem('masked-last-export',lastExport)}catch(e){}toast('Backup saved');rerender()}
+  catch(e){if(e&&e.code==='declined')return;toast(e&&e.code==='rate_limited'?'A save prompt is already open.':'Could not save the backup here.')}}
+
+/* ---- sheets ---- */
+let openId=null,openKind=null,sheetTab='timeline',confirmDel=false,scrapMode=false;
+let closeTok=0;function closeSheet(){flushAll();openId=null;openKind=null;confirmDel=false;scrapMode=false;const sh=document.getElementById('sheet'),sc=sh.querySelector('.scrim');const tok=++closeTok;
+  if(sc&&!reduced()){sc.classList.add('leave');setTimeout(()=>{if(tok===closeTok&&!openId)sh.innerHTML=''},170)}else sh.innerHTML='';rerender()}
+function openIdea(id,tab){sheetEnter=!openId;openId=id;openKind='idea';sheetTab=tab||'timeline';confirmDel=false;scrapMode=false;drawIdea()}
+const SCRAP_REASONS=['Too thin for a full video','Already covered','Compliance risk','No longer timely','Can’t find solid data','Low audience interest'];
+const fd=iso=>new Date(iso).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+const dur=iso=>{const d=Math.floor(daysSince(iso));return d<1?'today':d===1?'1 day':d+' days'};
+function ideaTimeline(i){
+  const H=i.history||[];const stageAt=s=>{const e=[...H].reverse().find(h=>(h.type||'stage')==='stage'&&h.stage===s);return e?e.t:(s==='Idea'?i.created:null)};
+  const cur=STAGES.indexOf(i.stage);const lastStage=[...H].reverse().find(h=>(h.type||'stage')==='stage');
+  const scriptEv=H.find(h=>h.type==='script');const scriptFinal=!!(i.checklist&&i.checklist.script);
+  const scriptTxt=scriptFinal?'Final ✓':scriptEv?`Started ${fd(scriptEv.t)}`:words(i.script)?'Drafting':'Not started';
+  const status=i.scrapped?'Scrapped':i.stage==='Published'?'Finalised':'In progress';
+  const ev=[];if(i.created)ev.push({t:i.created,c:'var(--gold)',h:'<b>Idea created</b>',x:i.pitch||''});
+  H.forEach(h=>{const L=histLine(h);ev.push({t:h.t,...L})});
+  (i.log||[]).forEach(l=>ev.push({t:l.t,c:'var(--gold)',h:'Build-log note',x:l.text}));
+  ev.sort((a,b)=>(a.t||'').localeCompare(b.t||''));
+  return `${i.scrapped?`<div class="scrapband"><div><b>Scrapped ${fd(i.scrapped.t)}</b>${i.scrapped.reason?`<p>${esc(i.scrapped.reason)}</p>`:''}</div><button class="btn sm" data-act="restore">Restore</button></div>`:''}
+  <div class="track${i.scrapped?' dead':''}">${STAGES.map((s,k)=>{const at=stageAt(s);const reached=k<=cur;return `<div class="stp${reached?' on':''}${k===cur?' cur':''}" style="--c:${STAGE_C[s]}"><i></i><b>${s}</b><span class="mono">${reached&&at?fd(at):'—'}</span></div>`}).join('')}</div>
+  <div class="facts">
+   <div><span>Status</span><b class="${i.scrapped?'bad':i.stage==='Published'?'good':''}">${status}</b></div>
+   <div><span>Age</span><b>${i.created?dur(i.created):'—'}</b></div>
+   <div><span>In ${esc(i.stage)}</span><b>${dur((lastStage&&lastStage.t)||i.created)}</b></div>
+   <div><span>Script</span><b>${scriptTxt}</b></div>
+   <div><span>Checklist</span><b>${ck(i)}/${CHECK.length}</b></div></div>
+  ${ev.length?`<div class="tl">${ev.map(e=>`<div class="ev" style="--c:${e.c}"><span class="k">${new Date(e.t).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})}</span><div>${e.h}</div>${e.x?`<div class="x">${esc(e.x)}</div>`:''}</div>`).join('')}</div>`:''}
+  ${H.length?'':'<p class="sub" style="margin:0">Stage moves, script progress, checklist ticks and scraps will be recorded here from now on.</p>'}`}
+function drawIdea(){const i=S.ideas.find(x=>x.id===openId);if(!i)return closeSheet();
+  const log=[...(i.log||[])].reverse();
+  document.getElementById('sheet').innerHTML=`<div class="scrim${enterCls()}" data-scrim><div class="sheet" role="dialog" aria-label="Idea">
+  <div class="spread">${i.scrapped?'<span class="chip st st-Scrapped">Scrapped</span>':`<span class="chip st st-${i.stage}">${i.stage}</span>`}<div class="row">${i.scrapped||scrapMode?'':'<button class="btn danger sm" data-act="scrapmode">Scrap idea</button>'}<button class="btn ghost sm" data-act="close">Close</button></div></div>
+  ${scrapMode?`<div class="scrapbox"><b>Scrap this idea?</b><p class="sub" style="margin:0">It leaves the Vault, Pipeline and Weekly picker but keeps its full history. You can restore it any time.</p>
+   <div class="row">${SCRAP_REASONS.map(r=>`<button class="chip" style="cursor:pointer;background:none" data-reason="${esc(r)}">${esc(r)}</button>`).join('')}</div>
+   <textarea id="scrap-why" placeholder="Why isn’t it materialising?" style="min-height:64px"></textarea>
+   <div class="row"><button class="btn primary sm" data-act="scrap">Scrap idea</button><button class="btn ghost sm" data-act="scrapcancel">Cancel</button></div></div>`:''}
+  <input class="ttl" id="e-title" type="text" value="${esc(i.title)}" placeholder="Idea title" aria-label="Title">
+  <div class="f3"><label class="f">Series<select data-ifield="series">${opts(SERIES_ALL,i.series)}</select></label>
+   <label class="f">Format<select data-ifield="format">${opts(FORMATS,i.format)}</select></label>
+   <label class="f">Stage<select data-ifield="stage">${opts(STAGES,i.stage)}</select></label></div>
+  <div class="seg" role="tablist" style="overflow-x:auto">${[['timeline','Timeline'],['notes','Build log'],['checklist','Checklist'],['script','Script'],['details','Details']].map(([k,l])=>`<button role="tab" aria-selected="${sheetTab===k}" data-stab="${k}">${l}${k==='notes'&&log.length?` <span class="mono">${log.length}</span>`:''}${k==='checklist'?` <span class="mono">${ck(i)}/${CHECK.length}</span>`:''}</button>`).join('')}</div>
+  ${sheetTab==='timeline'?ideaTimeline(i):''}
+  ${sheetTab==='checklist'?`<div class="pbar"><i style="width:${ck(i)/CHECK.length*100}%"></i></div>
+   <div class="cklist">${CHECK.map(([k,l])=>{const on=!!(i.checklist&&i.checklist[k]);return `<button class="ckrow" data-ck="${k}" aria-pressed="${on}"><span class="tick" aria-hidden="true">${on?'✓':''}</span><span>${l}</span>${k==='script'&&words(i.script)?`<span class="chip mono" style="margin-left:auto">${words(i.script)} words</span>`:''}</button>`}).join('')}</div>
+   <p class="sub" style="margin:0">Moving an idea to Published with items unticked shows a warning, but doesn’t block it.</p>`:''}
+  ${sheetTab==='notes'?`<label class="f">Core angle / hook<textarea data-ifield="pitch" placeholder="What’s the one thing this video says?">${esc(i.pitch||'')}</textarea></label>
+   <div class="stack"><textarea id="e-log" placeholder="Add to this idea: a new angle, a stat, a reference, a reaction…" style="min-height:70px"></textarea><div><button class="btn primary sm" data-act="addlog">Add to build log</button></div></div>
+   ${log.length?`<div class="log">${log.map(l=>`<div><time>${fmtDT(l.t)}</time><p>${esc(l.text)}</p></div>`).join('')}</div>`:`<div class="empty">No notes yet. Every note is dated, so you can see how the idea grew.</div>`}`:''}
+  ${sheetTab==='script'?`<div class="spread"><span id="wc">${wcChip(i)||'<span class="chip mono">0 words</span>'}</span><button class="btn sm" data-copyscript="${i.id}">Copy</button></div>
+   <textarea class="script" data-ifield="script" placeholder="Write or paste the script here">${esc(i.script||'')}</textarea>`:''}
+  ${sheetTab==='details'?`<label class="f">Tags<input type="text" data-ifield="tags" value="${esc(i.tags||'')}" placeholder="repo, EMI, RBI"></label>
+   <label class="f">Published link<input type="text" data-ifield="link" value="${esc(i.link||'')}" placeholder="https://youtu.be/…"></label>
+   ${i.link&&/^https?:\/\//.test(i.link)?`<a href="${esc(i.link)}" target="_blank" rel="noopener" style="color:var(--red)">Open published video ↗</a>`:''}
+   <p class="sub mono" style="margin:0">Created ${i.created?fmtDT(i.created):'—'} · updated ${ago(i.updated)}</p>
+   <div><button class="btn danger sm" data-act="delidea">${confirmDel?'Tap again to delete for good':'Delete idea'}</button></div>`:''}
+  </div></div>`}
+function openPrompt(id){sheetEnter=!openId;openId=id;openKind='prompt';confirmDel=false;drawPrompt()}
+function drawPrompt(){const p=S.prompts.find(x=>x.id===openId);if(!p)return closeSheet();
+  document.getElementById('sheet').innerHTML=`<div class="scrim${enterCls()}" data-scrim><div class="sheet" role="dialog" aria-label="Prompt">
+  <div class="spread"><span class="chip">${esc(p.cat)}</span><button class="btn ghost sm" data-act="close">Close</button></div>
+  <input class="ttl" type="text" data-pfield="title" value="${esc(p.title)}" placeholder="Prompt name" aria-label="Prompt name">
+  <label class="f">Category<select data-pfield="cat">${opts(PCATS,p.cat)}</select></label>
+  <label class="f">Prompt<textarea class="script" data-pfield="body" placeholder="Paste the full prompt">${esc(p.body||'')}</textarea></label>
+  <div class="spread"><button class="btn primary sm" data-copyp="${p.id}">Copy prompt</button><button class="btn danger sm" data-act="delprompt">${confirmDel?'Tap again to delete':'Delete'}</button></div></div></div>`}
+
+{const _dI=drawIdea,_dP=drawPrompt;drawIdea=function(){_dI();applyPop()};drawPrompt=function(){_dP();applyPop()}}
+/* ---- actions ---- */
+async function copy(t){try{await navigator.clipboard.writeText(t||'');toast('Copied')}catch(e){toast('Copy blocked here. Select the text and copy it manually.')}}
+function setSlot(k,i,data,delay=0){const base=new Date(k.slice(2));const doc=JSON.parse(JSON.stringify(S.sched[k]||{week:k.slice(2),days:{}}));doc.days[i]={...(doc.days[i]||{}),...data};S.sched[k]=doc;
+  clearTimeout(timers['schedule/'+k]);timers['schedule/'+k]=setTimeout(()=>{if(db)enqueue('schedule/'+k,()=>db.doc('schedule/'+k).set(S.sched[k]))},delay)}
+async function newIdea(title,series){const id=await addDoc('ideas',{title:title||'Untitled idea',series:series||'Unassigned',format:'Short',stage:'Idea',pitch:'',script:'',tags:'',link:'',log:[],created:now(),updated:now()});
+  if(id){S.ideas.unshift({id,title:title||'Untitled idea',series:series||'Unassigned',format:'Short',stage:'Idea',log:[],created:now(),updated:now()});return id}}
+
+document.addEventListener('click',async e=>{
+  const el=e.target.closest('[data-go],[data-act],[data-open],[data-openp],[data-move],[data-wk],[data-done],[data-today-done],[data-stab],[data-copyscript],[data-copyp],[data-pcat],[data-deldiary],[data-delgrowth],[data-scrim],[data-ck],[data-rwk],[data-tlk],[data-reason]');
+  if(!el)return;const d=el.dataset;
+  if(d.scrim!=null){if(e.target===el)closeSheet();return}
+  if(d.copyscript){e.stopPropagation();return copy(S.ideas.find(x=>x.id===d.copyscript)?.script)}
+  if(d.copyp){e.stopPropagation();return copy(S.prompts.find(x=>x.id===d.copyp)?.body)}
+  if(d.move){e.stopPropagation();const i=S.ideas.find(x=>x.id===d.move);const ni=STAGES.indexOf(i.stage)+(+d.dir);if(STAGES[ni]){setIdea(i.id,{stage:STAGES[ni]},0);popAfter(`.col [data-open="${i.id}"]`);rerender()}return}
+  if(d.go){if(openId)closeSheet();location.hash=d.go;return}
+  if(d.open)return openIdea(d.open,d.tab);
+  if(d.openp)return openPrompt(d.openp);
+  if(d.stab){flushAll();popAfter(`[data-stab="${d.stab}"]`);sheetTab=d.stab;return drawIdea()}
+  if(d.reason){const ta=document.getElementById('scrap-why');ta.value=ta.value?ta.value+'; '+d.reason:d.reason;ta.focus();return}
+  if(d.act==='scrapmode'){scrapMode=true;drawIdea();setTimeout(()=>{const s=document.querySelector('.scrapbox');s&&s.scrollIntoView({block:'nearest'})},20);return}
+  if(d.act==='scrapcancel'){scrapMode=false;return drawIdea()}
+  if(d.act==='scrap'){const why=document.getElementById('scrap-why').value.trim();const i=S.ideas.find(x=>x.id===openId);scrapMode=false;sheetTab='timeline';
+    setIdea(i.id,{scrapped:{t:now(),reason:why}},0,[{type:'scrap',reason:why}]);popAfter('.scrapband');drawIdea();rerender();toast('Scrapped. Find it under Vault → Scrapped');return}
+  if(d.act==='restore'){const i=S.ideas.find(x=>x.id===openId);setIdea(i.id,{scrapped:null},0,[{type:'restore'}]);popAfter('.track');drawIdea();rerender();toast('Restored to '+i.stage);return}
+  if(d.ck){const i=S.ideas.find(x=>x.id===openId);const c={...(i.checklist||{})};c[d.ck]=!c[d.ck];setIdea(i.id,{checklist:c},0);popAfter(`[data-ck="${d.ck}"] .tick`);drawIdea();rerender();return}
+  if(d.rwk!=null){flushAll();reviewOff=d.rwk==='0'?0:reviewOff+(+d.rwk);return rerender()}
+  if(d.tlk){popAfter(`[data-tlk="${d.tlk}"]`);tlKind=d.tlk;tlLimit=120;return rerender()}
+  if(d.act==='tlmore'){tlLimit+=120;return rerender()}
+  if(d.act==='export')return exportAll();
+  if(d.act==='review2diary')return reviewToDiary(d.wkey);
+  if(d.wk!=null){weekOff=d.wk==='0'?0:weekOff+(+d.wk);return rerender()}
+  if(d.pcat){popAfter(`[data-pcat="${d.pcat}"]`);promptCat=d.pcat;return rerender()}
+  if(d.todayDone!=null){const t=new Date();d.done=String(dIdx(t));d.wkey=wkey(t)}
+  if(d.done!=null){const k=d.wkey,i=+d.done,sl=S.sched[k]?.days?.[i]||{};const nv=!sl.done;setSlot(k,i,{done:nv});popAfter(d.todayDone!=null?'[data-today-done]':`[data-done="${i}"][data-wkey="${k}"]`);
+    if(nv&&sl.ideaId){const idea=S.ideas.find(x=>x.id===sl.ideaId);if(idea&&idea.stage!=='Published'){toast(`“${idea.title}” moved to Published`);setIdea(idea.id,{stage:'Published'},0)}}return rerender()}
+  if(d.deldiary){if(pendingDel===d.deldiary){S.diary=S.diary.filter(x=>x.id!==d.deldiary);delDoc('diary/'+d.deldiary);pendingDel=null}else pendingDel=d.deldiary;return rerender()}
+  if(d.delgrowth){if(pendingDel===d.delgrowth){S.growth=S.growth.filter(x=>x.id!==d.delgrowth);delDoc('growth/'+d.delgrowth);pendingDel=null}else pendingDel=d.delgrowth;return rerender()}
+  const a=d.act;
+  if(a==='close')return closeSheet();
+  if(a==='newidea'){const id=await newIdea('','Unassigned');if(id){openIdea(id,'notes');setTimeout(()=>{const t=document.getElementById('e-title');t&&(t.select(),t.focus())},30)}return}
+  if(a==='capture'){const inp=document.getElementById('qc');const v=inp.value.trim();if(!v){inp.focus();return}const id=await newIdea(v,SERIES[dIdx(new Date())]);if(id){inp.value='';toast('Saved to the vault');rerender()}return}
+  if(a==='addlog'){const ta=document.getElementById('e-log');const v=ta.value.trim();if(!v)return ta.focus();const i=S.ideas.find(x=>x.id===openId);const log=[...(i.log||[]),{t:now(),text:v}];setIdea(i.id,{log},0);popAfter('.log div');drawIdea();return}
+  if(a==='delidea'){if(!confirmDel){confirmDel=true;return drawIdea()}const id=openId;delete pend['ideas/'+id];S.ideas=S.ideas.filter(x=>x.id!==id);delDoc('ideas/'+id);closeSheet();toast('Idea deleted');return}
+  if(a==='diary'){const ta=document.getElementById('d-text'),v=ta.value.trim();if(!v)return ta.focus();const ideaId=document.getElementById('d-idea').value;const doc={text:v,ideaId,created:now()};const id=await addDoc('diary',doc);if(id){S.diary.push({id,...doc});ta.value='';document.getElementById('d-idea').value='';popAfter('#view .entry');toast('Entry added');rerender()}return}
+  if(a==='growth'){const g=k=>{const v=document.getElementById('g-'+k).value;return v===''?null:Number(v)};const doc={date:document.getElementById('g-date').value||ymd(new Date()),subs:g('subs'),views:g('views'),hours:g('hours'),ig:g('ig')};
+    if([doc.subs,doc.views,doc.hours,doc.ig].every(v=>v==null)){toast('Enter at least one number.');return}
+    const id=await addDoc('growth',doc);if(id){S.growth.push({id,...doc});['subs','views','hours','ig'].forEach(k=>document.getElementById('g-'+k).value='');popAfter('tbody tr');toast('Logged');rerender()}return}
+  if(a==='newprompt'){const doc={title:'',cat:promptCat==='All'?'Other':promptCat,body:'',created:now()};const id=await addDoc('prompts',doc);if(id){S.prompts.push({id,...doc});openPrompt(id)}return}
+  if(a==='delprompt'){if(!confirmDel){confirmDel=true;return drawPrompt()}const id=openId;delete pend['prompts/'+id];S.prompts=S.prompts.filter(x=>x.id!==id);delDoc('prompts/'+id);closeSheet();return}
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&openId)return closeSheet();
+  if(e.key==='Enter'&&e.target.id==='qc'){e.preventDefault();document.querySelector('[data-act="capture"]').click()}
+  if(e.key==='Enter'&&e.target.matches('.card[role=button]')&&e.target===document.activeElement){e.target.click()}
+});
+document.addEventListener('input',e=>{const t=e.target,d=t.dataset;
+  if(t.id==='e-title'){setIdea(openId,{title:t.value})}
+  else if(d.ifield&&t.tagName!=='SELECT'){setIdea(openId,{[d.ifield]:t.value});if(d.ifield==='script'){const i=S.ideas.find(x=>x.id===openId);document.getElementById('wc').innerHTML=wcChip(i)||'<span class="chip mono">0 words</span>'}}
+  else if(d.pfield&&t.tagName!=='SELECT'){const p=S.prompts.find(x=>x.id===openId);p[d.pfield]=t.value;patch('prompts/'+openId,{[d.pfield]:t.value})}
+  else if(d.brand){S.brand[d.brand]=t.value;patch('brand/kit',{[d.brand]:t.value},800)}
+  else if(d.slotnote!=null){setSlot(d.wkey,+d.slotnote,{note:t.value},700)}
+  else if(d.rv&&t.tagName!=='SELECT'){setReview(d.wkey,{[d.rv]:t.value})}
+  else if(t.id==='q-ideas'){ideaFilter.q=t.value;rerender()}
+  else if(t.id==='q-diary'){diaryQ=t.value;rerender()}
+});
+document.addEventListener('change',e=>{const t=e.target,d=t.dataset;
+  if(d.ifield&&t.tagName==='SELECT'){setIdea(openId,{[d.ifield]:t.value},0);drawIdea()}
+  else if(d.pfield==='cat'){const p=S.prompts.find(x=>x.id===openId);p.cat=t.value;patch('prompts/'+openId,{cat:t.value},0);drawPrompt()}
+  else if(d.slot!=null){setSlot(d.wkey,+d.slot,{ideaId:t.value});
+    if(t.value){const dt=new Date(d.wkey.slice(2)+'T00:00:00');dt.setDate(dt.getDate()+(+d.slot));setIdea(t.value,{},0,[{type:'slot',day:`${DAYS[+d.slot]} ${fd(dt.toISOString())}`,series:SERIES[+d.slot]}])}rerender()}
+  else if(d.rv&&t.tagName==='SELECT'){setReview(d.wkey,{[d.rv]:t.value},0)}
+  else if(t.id==='f-stage'){ideaFilter.stage=t.value;rerender()}
+  else if(t.id==='f-series'){ideaFilter.series=t.value;rerender()}
+});
+window.addEventListener('hashchange',()=>{pendingDel=null;popAfter('.tab[aria-current]');render();window.scrollTo(0,0);const v=document.getElementById('view');if(!reduced()){v.classList.remove('vin');void v.offsetWidth;v.classList.add('vin')}});
+window.addEventListener('pagehide',flushAll);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flushAll()});
+
+/* ---- data ---- */
+function note(m){document.getElementById('note').innerHTML=m?`<div class="notice">${m}</div>`:''}
+function subscribe(col,key){const t=setTimeout(()=>{if(!loaded[key])note('Your data hasn’t loaded yet. Check your connection; this page keeps trying.')},10000);
+  db.collection(col).onSnapshot(s=>{if(!s.metadata.fromCache){clearTimeout(t);loaded[key]=true;if(Object.keys(loaded).length>=6)note('')}
+    const rows=s.docs.map(d=>({id:d.id,...d.data()}));
+    if(key==='sched'){const m={};rows.forEach(r=>m[r.id]=r);S.sched=m}
+    else if(key==='reviews'){const m={};rows.forEach(r=>m[r.id]={...r,...(pendR[r.id]||{})});Object.keys(pendR).forEach(k=>{if(!m[k])m[k]={week:k.slice(2),...pendR[k]}});S.reviews=m}
+    else S[key]=rows;
+    rerender();if(openKind==='idea'&&!S.ideas.find(x=>x.id===openId))closeSheet()},
+  ()=>{clearTimeout(t);loaded[key]=true;note('Some data could not be loaded. Reload the page to try again.');rerender()})}
+render();
+(async()=>{db=window.claude?await window.claude.use('db'):null;
+  if(!db){['ideas','diary','prompts','growth','sched','reviews'].forEach(k=>loaded[k]=true);note('Saving isn’t available in this view, so changes won’t be kept. Open the artifact while signed in to Claude.');return rerender()}
+  subscribe('ideas','ideas');subscribe('diary','diary');subscribe('prompts','prompts');subscribe('growth','growth');subscribe('schedule','sched');subscribe('reviews','reviews');
+  db.doc('brand/kit').onSnapshot(s=>{S.brandExists=s.exists;const fresh=s.exists?{...s.data()}:{};const p=pend['brand/kit']||{};S.brand={...fresh,...p};if(route()==='brand'){const a=document.activeElement;if(!(a&&a.dataset&&a.dataset.brand))rerender()}else rerender()},()=>{});
+})();
+</script>
+
+</body></html>

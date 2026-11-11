@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#07080d">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Launchpad">
+<link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png">
+<script src="pwa.js" data-app="launchpad" data-caps="downloads"></script>
+<title>Shubham's Launchpad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,400;12..96,700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&family=Anton&family=Rajdhani:wght@700&display=swap">
+<style>
+/* Layout: one dark glass "home screen" — a time card on top, then an app-icon grid.
+   Deliberately single-theme (night sky), so every color is set explicitly. */
+:root{
+  --ink:#07080d; --glass:rgba(255,255,255,.055); --glass-hi:rgba(255,255,255,.12); --edge:rgba(255,255,255,.10);
+  --fg:#f2f0ea; --muted:rgba(242,240,234,.55); --gold:#d6b25e; --gold-soft:rgba(214,178,94,.22);
+  --masked-cream:#f1e6d2; --masked-red:#c4302b; --masked-ink:#141210;
+  --ascend-deep:#050b1c; --ascend-blue:#4fb2ff; --ascend-glow:rgba(79,178,255,.55);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Inter", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{margin:0;background:var(--ink);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.45;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-top:calc(22px + env(safe-area-inset-top, 0px));padding-bottom:calc(32px + env(safe-area-inset-bottom, 0px));
+  position:relative;overflow-x:hidden}
+
+/* Sky: three soft orbs in the apps' colours, plus film grain */
+.sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55}
+.o1{width:420px;height:420px;background:radial-gradient(circle,#b5862a,transparent 65%);top:-140px;left:-120px;animation:drift 22s ease-in-out infinite alternate}
+.o2{width:380px;height:380px;background:radial-gradient(circle,#1f5fbf,transparent 65%);top:30%;right:-160px;animation:drift 26s ease-in-out infinite alternate-reverse}
+.o3{width:340px;height:340px;background:radial-gradient(circle,#8f1f1c,transparent 65%);bottom:-160px;left:20%;opacity:.4;animation:drift 30s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(60px,40px) scale(1.12)}}
+.grain{position:absolute;inset:0;opacity:.08;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+
+/* Time card */
+.card{background:linear-gradient(160deg,var(--glass-hi),var(--glass) 55%);border:1px solid var(--edge);border-radius:26px;
+  padding:22px 22px 18px;backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);
+  box-shadow:0 30px 60px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.12)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.greet{font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.who{font-family:var(--f-display);font-weight:400;font-size:15px;color:var(--muted);margin-top:2px}
+.date{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;color:var(--muted);text-align:right;text-transform:uppercase}
+.clock{font-family:var(--f-display);font-weight:200;font-size:clamp(64px,19vw,96px);line-height:.95;letter-spacing:-.04em;margin:10px 0 16px;font-variant-numeric:tabular-nums}
+.clock span{color:var(--gold);animation:blink 2s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+.counts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.count{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(0,0,0,.22);border:1px solid var(--edge);min-width:0}
+.ring{flex:none;width:42px;height:42px}
+.ring circle{fill:none;stroke-width:3.5}
+.ring .bg{stroke:rgba(255,255,255,.1)}
+.ring .fg{stroke:var(--gold);stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.2s ease}
+.ring text{fill:var(--fg);font-family:var(--f-display);font-weight:700;font-size:13px;text-anchor:middle;dominant-baseline:central}
+.count .k{font-size:12px;color:var(--muted)}
+.count .v{font-family:var(--f-display);font-weight:700;font-size:15px}
+
+/* App grid */
+.label{font-family:var(--f-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding-left:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 10px}
+.app{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent}
+.icon{width:min(76px,19vw);aspect-ratio:1;max-width:100%;border-radius:22%;position:relative;overflow:hidden;display:grid;place-items:center;
+  box-shadow:0 14px 26px -12px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.25);transition:transform .35s cubic-bezier(.2,.9,.3,1.3), box-shadow .35s}
+.icon::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.28),transparent 45%);pointer-events:none}
+.app:hover .icon{transform:translateY(-5px) scale(1.06)}
+.app:active .icon{transform:scale(.94)}
+.app:focus-visible .icon{outline:2px solid var(--gold);outline-offset:4px}
+.nm{font-size:12px;font-weight:500;text-align:center;line-height:1.2}
+.st{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:-5px;display:flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;background:#46d38a;box-shadow:0 0 8px #46d38a}
+.dot.wait{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+
+.i-masked{background:var(--masked-cream)}
+.i-masked .m{position:relative;font-family:"Anton",Impact,sans-serif;font-size:min(44px,11vw);line-height:1;color:var(--masked-red);text-shadow:2px 3px 0 var(--masked-ink);transform:rotate(-4deg)}
+.i-masked .m::after{content:"";position:absolute;left:8%;right:8%;bottom:-5px;height:3px;border-radius:2px;background:var(--gold)}
+.i-ascend{background:radial-gradient(circle at 50% 115%,rgba(79,178,255,.55),transparent 60%),var(--ascend-deep)}
+.i-ascend::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(79,178,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(79,178,255,.12) 1px,transparent 1px);background-size:9px 9px}
+.i-ascend .s{position:relative;font-family:"Rajdhani",var(--f-body);font-weight:700;font-size:min(30px,8vw);color:#e6f4ff;
+  text-shadow:0 0 10px var(--ascend-glow),0 0 22px var(--ascend-glow);transform:skewX(-8deg)}
+.i-add{background:transparent;border:1.5px dashed rgba(255,255,255,.22);box-shadow:none;color:var(--muted);font-family:var(--f-display);font-weight:200;font-size:34px}
+.i-add::after{display:none}
+.add .nm{color:var(--muted)}
+
+footer{text-align:center;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+
+
+footer .link{background:none;border:0;padding:6px 10px;font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--muted);cursor:pointer;border-radius:999px}
+footer .link:hover{color:var(--gold)}
+.hint{font-size:13px;color:var(--muted);text-align:center;padding:10px 14px;border:1px dashed var(--edge);border-radius:14px}
+.hint b{color:var(--fg);font-weight:500}.hint .share{color:var(--gold)}
+/* Backup sheet */
+.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:560px;background:#12141c;border:1px solid var(--edge);border-bottom:0;border-radius:24px 24px 0 0;
+  padding:18px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  display:flex;flex-direction:column;gap:14px;max-height:88vh;overflow-y:auto;animation:up .3s cubic-bezier(.2,.9,.3,1.05)}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:20px}
+.sheet .sub{margin:0;color:var(--muted);font-size:13px}
+.blk{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--edge)}
+.blk-h{display:flex;align-items:center;gap:10px}
+.blk-h .mini{position:relative;width:30px;height:30px;border-radius:8px;flex:none;display:grid;place-items:center;overflow:hidden}
+.blk-h b{font-family:var(--f-display);font-weight:700;font-size:15px}
+.blk-h small{display:block;color:var(--muted);font-size:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--edge);background:rgba(255,255,255,.06);color:var(--fg);padding:9px 14px;border-radius:999px;font:500 13px var(--f-body);cursor:pointer}
+.btn:hover{border-color:var(--gold)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#1a1408}
+.btn.warn{background:#c4302b;border-color:#c4302b;color:#fff}
+.confirm{font-size:13px;color:var(--fg);background:rgba(196,48,43,.12);border:1px solid rgba(196,48,43,.5);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.msg{font-size:12.5px;color:var(--muted)}.msg.ok{color:#46d38a}.msg.bad{color:#ff7a6b}
+@keyframes rise{from{opacity:.001;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card{animation:rise .6s ease both}
+.app{animation:rise .6s ease both}
+.app:nth-child(1){animation-delay:.12s}.app:nth-child(2){animation-delay:.2s}.app:nth-child(3){animation-delay:.28s}.app:nth-child(4){animation-delay:.36s}
+@media (max-width:360px){.counts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head><body>
+<div class="sky" aria-hidden="true"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="grain"></div></div>
+
+<div class="wrap">
+  <section class="card" aria-label="Today">
+    <div class="top">
+      <div><div class="greet" id="greet">Good evening</div><div class="who">Shubham</div></div>
+      <div class="date" id="date">Wed · 11 Nov</div>
+    </div>
+    <div class="clock" id="clock">16<span>:</span>36</div>
+    <div class="counts">
+      <div class="count">
+        <svg class="ring" viewBox="0 0 42 42"><circle class="bg" cx="21" cy="21" r="17"/><circle class="fg" id="r1" cx="21" cy="21" r="17"/><text x="21" y="21" id="n1">12</text></svg>
+        <div><div class="k">FRM Part 2</div><div class="v" id="t1">days left</div></div>
+      </div>
+      <div class="count">
+        <svg class="ring" viewBox="0 0 42 42"><circle class="bg" cx="21" cy="21" r="17"/><circle class="fg" id="r2" cx="21" cy="21" r="17"/><text x="21" y="21" id="n2">12</text></svg>
+        <div><div class="k">Ascend begins</div><div class="v" id="t2">days to go</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="label">Apps</div>
+  <nav class="grid" id="grid" aria-label="Apps"></nav>
+
+  <div class="hint" id="install" hidden>
+    <b>Install Launchpad:</b> tap <span class="share">Share</span> in Safari, then <b>Add to Home Screen</b>.
+  </div>
+  <footer><button class="link" id="openData" type="button">Backup &amp; restore</button></footer>
+</div>
+
+<div class="scrim" id="data" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dataTitle">
+    <div><h2 id="dataTitle">Backup &amp; restore</h2>
+    <p class="sub">Your apps save only on this phone. Make a backup now and then, and use Restore to bring data in from a backup file.</p></div>
+    <div class="blk">
+      <div class="blk-h"><div class="mini i-masked" style="width:30px;height:30px"><span class="m" style="font-size:18px">M</span></div>
+        <div><b>MaskED HQ</b><small id="mInfo">—</small></div></div>
+      <div class="row"><button class="btn" data-act="m-export" type="button">Back up</button>
+        <label class="btn gold" for="mFile">Restore from file</label><input type="file" id="mFile" accept=".json,application/json" hidden></div>
+      <div id="mMsg"></div>
+    </div>
+    <div class="blk">
+      <div class="blk-h"><div class="mini i-ascend" style="width:30px;height:30px"><span class="s" style="font-size:16px">A</span></div>
+        <div><b>Ascend</b><small id="aInfo">—</small></div></div>
+      <div class="row"><button class="btn" data-act="a-export" type="button">Back up</button>
+        <label class="btn gold" for="aFile">Restore from file</label><input type="file" id="aFile" accept=".json,application/json" hidden></div>
+      <div id="aMsg"></div>
+    </div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close" type="button">Done</button></div>
+  </div>
+</div>
+
+<script>
+// Registry: add one entry per new app in the Webapps project.
+const APPS = [
+  { name:"MaskED HQ", url:"masked.html",
+    status:["live","Live"], icon:`<div class="icon i-masked"><span class="m">M</span></div>` },
+  { name:"Ascend", url:"ascend.html",
+    status:["wait","23 Nov"], icon:`<div class="icon i-ascend"><span class="s">A</span></div>` }
+];
+document.getElementById("grid").innerHTML = APPS.map(a => `
+  <a class="app" href="${a.url}" aria-label="Open ${a.name}">
+    ${a.icon}<span class="nm">${a.name}</span>
+    <span class="st"><i class="dot ${a.status[0]==="wait"?"wait":""}"></i>${a.status[1]}</span>
+  </a>`).join("") + `
+  <div class="app add" title="Ask Claude to add your next app here"><div class="icon i-add">+</div><span class="nm">Next app</span></div>`;
+
+const C = 2*Math.PI*17;
+function ring(id, frac){ const el=document.getElementById(id); el.style.strokeDasharray=C; el.style.strokeDashoffset=C*(1-Math.max(0,Math.min(1,frac))); }
+function tick(){
+  const now=new Date();
+  const f=o=>new Intl.DateTimeFormat("en-IN",Object.assign({timeZone:"Asia/Kolkata"},o)).format(now);
+  const h=+f({hour:"numeric",hour12:false}), m=f({minute:"2-digit"}).padStart(2,"0");
+  document.getElementById("greet").textContent = h<5?"Late night":h<12?"Good morning":h<17?"Good afternoon":"Good evening";
+  document.getElementById("clock").innerHTML = String(h).padStart(2,"0")+"<span>:</span>"+m;
+  document.getElementById("date").textContent = f({weekday:"short"})+" · "+f({day:"numeric",month:"short"});
+  const today=new Date(f({year:"numeric"})+"-"+f({month:"2-digit"})+"-"+f({day:"2-digit"})+"T00:00:00+05:30");
+  const d=Math.round((new Date("2026-11-23T00:00:00+05:30")-today)/864e5);
+  const left=Math.max(d,0), frac=1-left/30; // ring fills over the final 30 days
+  ["1","2"].forEach(i=>{document.getElementById("n"+i).textContent = d>0?left:"✓"; ring("r"+i, frac);});
+  document.getElementById("t1").textContent = d>1?"days left":d===1?"tomorrow":d===0?"today":"done";
+  document.getElementById("t2").textContent = d>1?"days to go":d===1?"tomorrow":"live now";
+}
+tick(); setInterval(tick,15000);
+
+/* ---------- Backup & restore (device storage shared by all apps on this site) ---------- */
+const MK='pwa.db.masked', AK='ascend.v1';
+const get=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const put=(k,v)=>{localStorage.setItem(k,v)};
+const stamp=()=>new Date().toISOString().slice(0,10);
+const dataEl=document.getElementById('data');
+function info(){
+  let m={};try{m=JSON.parse(get(MK)||'{}')}catch(e){}
+  const n=c=>Object.keys(m).filter(k=>k.startsWith(c+'/')).length;
+  document.getElementById('mInfo').textContent=Object.keys(m).length?`${n("ideas")} ideas · ${n("diary")} diary entries on this phone`:'Nothing saved on this phone yet';
+  let a=null;try{a=JSON.parse(get(AK)||'null')}catch(e){}
+  document.getElementById('aInfo').textContent=a?`${(a.xp||0).toLocaleString('en-IN')} XP · ${Object.keys(a.days||{}).length} days logged`:'Nothing saved on this phone yet';
+}
+function msg(id,t,cls){document.getElementById(id).innerHTML=t?`<div class="msg ${cls||''}">${t}</div>`:''}
+async function share(name,text){
+  const dl=await window.claude.use('downloads');
+  try{await dl.save({filename:name,data:text});return true}catch(e){return false}
+}
+function maskedBackup(){
+  let m={};try{m=JSON.parse(get(MK)||'{}')}catch(e){}
+  const rows=c=>Object.keys(m).filter(k=>k.startsWith(c+'/')&&k.split('/').length===2).map(k=>({id:k.split('/')[1],...m[k]}));
+  const map=c=>Object.fromEntries(rows(c).map(r=>[r.id,r]));
+  return {app:'MaskED HQ',exportedAt:new Date().toISOString(),ideas:rows('ideas'),diary:rows('diary'),prompts:rows('prompts'),growth:rows('growth'),schedule:map('schedule'),reviews:map('reviews'),brand:m['brand/kit']||{}};
+}
+function maskedStore(b){
+  const s={};const strip=o=>{const c={...o};delete c.id;return c};
+  ['ideas','diary','prompts','growth'].forEach(c=>(b[c]||[]).forEach(r=>{if(r&&r.id)s[c+'/'+r.id]=strip(r)}));
+  ['schedule','reviews'].forEach(c=>Object.entries(b[c]||{}).forEach(([k,v])=>{s[c+'/'+k]=strip(v)}));
+  if(b.brand&&Object.keys(b.brand).length)s['brand/kit']=b.brand;
+  return s;
+}
+let pending=null;
+function askConfirm(target,label,apply){
+  pending=apply;
+  msg(target,'');
+  document.getElementById(target).innerHTML=`<div class="confirm">This replaces the ${label} data on this phone with the backup file.
+    <div class="row"><button class="btn warn" data-act="apply" type="button">Replace and restore</button><button class="btn" data-act="cancel" type="button">Cancel</button></div></div>`;
+  pending.target=target;
+}
+function readFile(input,cb){const f=input.files[0];input.value='';if(!f)return;const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(f)}
+document.getElementById('mFile').addEventListener('change',e=>readFile(e.target,txt=>{
+  let b;try{b=JSON.parse(txt)}catch(_){return msg('mMsg','That file isn’t a backup. Pick the .json file MaskED HQ saved.','bad')}
+  if(!b||b.app!=='MaskED HQ')return msg('mMsg','That file isn’t a MaskED HQ backup. Pick the file named masked-hq-backup-….json.','bad');
+  const s=maskedStore(b);
+  askConfirm('mMsg','MaskED HQ',()=>{try{put(MK,JSON.stringify(s));msg('mMsg',`Restored ${(b.ideas||[]).length} idea${(b.ideas||[]).length===1?"":"s"} and ${(b.diary||[]).length} diary entr${(b.diary||[]).length===1?"y":"ies"}.`,'ok');info()}catch(_){msg('mMsg','Phone storage is full, so the restore didn’t finish. Free some space and try again.','bad')}});
+}));
+document.getElementById('aFile').addEventListener('change',e=>readFile(e.target,txt=>{
+  let b;try{b=JSON.parse(txt)}catch(_){return msg('aMsg','That file isn’t a backup. Pick the .json file Ascend saved.','bad')}
+  const st=b&&b.app==='Ascend'?b.state:b;
+  if(!st||!st.stats||!st.days)return msg('aMsg','That file isn’t an Ascend backup. Pick the file named ascend-backup-….json.','bad');
+  askConfirm('aMsg','Ascend',()=>{try{put(AK,JSON.stringify(st));msg('aMsg',`Restored · ${(st.xp||0).toLocaleString('en-IN')} XP.`,'ok');info()}catch(_){msg('aMsg','Phone storage is full, so the restore didn’t finish.','bad')}});
+}));
+dataEl.addEventListener('click',async e=>{
+  if(e.target===dataEl)return closeData();
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='close')return closeData();
+  if(a==='cancel'){msg(pending&&pending.target,'');pending=null;return}
+  if(a==='apply'&&pending){const p=pending;pending=null;p();return}
+  if(a==='m-export'){if(!get(MK))return msg('mMsg','Nothing to back up yet.','bad');if(await share(`masked-hq-backup-${stamp()}.json`,JSON.stringify(maskedBackup(),null,2)))msg('mMsg','Backup saved.','ok')}
+  if(a==='a-export'){const st=get(AK);if(!st)return msg('aMsg','Nothing to back up yet.','bad');if(await share(`ascend-backup-${stamp()}.json`,JSON.stringify({app:'Ascend',exportedAt:new Date().toISOString(),state:JSON.parse(st)},null,2)))msg('aMsg','Backup saved.','ok')}
+});
+function openData(){info();msg('mMsg','');msg('aMsg','');dataEl.hidden=false}
+function closeData(){dataEl.hidden=true;pending=null}
+document.getElementById('openData').addEventListener('click',openData);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!dataEl.hidden)closeData()});
+
+/* Install hint: only in a browser tab on iPhone/iPad, not once installed */
+const standalone=navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+if(!standalone&&/iPhone|iPad|iPod/.test(navigator.userAgent))document.getElementById('install').hidden=false;
+</script>
+</body></html>
