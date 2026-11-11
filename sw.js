@@ -1,5 +1,5 @@
 /* Offline support. Bump VERSION whenever you upload changed files. */
-const VERSION = 'launchpad-v1';
+const VERSION = 'launchpad-v2';
 const SHELL = [
   './', 'index.html', 'masked.html', 'ascend.html', 'pwa.js', 'manifest.webmanifest',
   'icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'
